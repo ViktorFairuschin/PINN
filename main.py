@@ -15,11 +15,11 @@ def main():
 
     # define models parameters
 
-    units = [256] * 5
+    units = [100] * 5
     activation = 'sigmoid'
     c = 1
     lr = 0.001
-    batch_size = 256
+    batch_size = 64
     log_dir = './logs/' + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
     # create model
@@ -28,7 +28,7 @@ def main():
 
     # train model
 
-    model.fit(steps=10000)
+    model.fit(steps=20000)
 
     # plot initial distribution
 

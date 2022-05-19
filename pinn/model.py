@@ -26,12 +26,14 @@ class PINN:
             lr: float,
             batch_size: int,
             log_dir: str,
-            **kwargs
     ):
 
         self.c = c
         self.units = units
         self.batch_size = batch_size
+
+        self.max_x = 10.
+        self.max_t = 4.
 
         # create neural network to approximate u(x,t)
 
@@ -84,10 +86,10 @@ class PINN:
 
     @tf.function
     def pde(self):
-        """ u_tt(x,t) - c^2 * u_xx(x,t) = 0,    0 < x < 1,     0 < t < 1 """
+        """ u_tt(x,t) - c^2 * u_xx(x,t) = 0,    0 < x < X,     0 < t < T """
 
-        x = tf.random.uniform((self.batch_size,), 0., 1.)
-        t = tf.random.uniform((self.batch_size,), 0., 1.)
+        x = tf.random.uniform((self.batch_size,), 0., self.max_x)
+        t = tf.random.uniform((self.batch_size,), 0., self.max_t)
         with tf.GradientTape(persistent=True) as g:
             g.watch(x)
             g.watch(t)
@@ -100,20 +102,20 @@ class PINN:
         u_xx = g.gradient(u_x, x)
         u_tt = g.gradient(u_t, t)
         del g, gg
-        return tf.reduce_mean(tf.square(u_tt - self.c ** 2 * u_xx))
+        return tf.reduce_mean(tf.square(u_tt - self.c * self.c * u_xx))
 
     @tf.function
     def f(self, x):
         """ initial distribution of u(x,t) at t = 0 """
 
-        return tf.exp(- tf.square(x - 0.5) / 0.005)
+        return tf.exp(- tf.square(x - self.max_x / 2) / (self.max_x / 40))
 
     @tf.function
     def bc(self):
-        """ u(0,t) = u(1,t) = 0,   0 < t < 1 """
+        """ u(0,t) = u(X,t) = 0,   0 < t < T """
 
-        t = tf.random.uniform((self.batch_size,), 0., 1.)
-        x = tf.ones_like(t)
+        t = tf.random.uniform((self.batch_size,), 0., self.max_t)
+        x = tf.ones_like(t) * self.max_x
         u = self.u(tf.stack([x, t], axis=1))
         x = tf.zeros_like(t)
         u += self.u(tf.stack([x, t], axis=1))
@@ -123,7 +125,7 @@ class PINN:
     def ic(self):
         """ u(x,0) = f(x),     u_t(x,0) = 0 """
 
-        x = tf.random.uniform((self.batch_size,), 0., 1.)
+        x = tf.random.uniform((self.batch_size,), 0., self.max_x)
         t = tf.zeros_like(x)
         with tf.GradientTape(persistent=True) as g:
             g.watch(x)

@@ -4,10 +4,10 @@ from matplotlib.animation import FuncAnimation, PillowWriter
 import numpy as np
 
 
-def plot_initial_distribution(model, save_dir=None):
+def plot_initial_distribution(model, save_dir=None, max_x=10.):
     """ Plot initial distribution """
 
-    x = np.linspace(0., 1., 1000)
+    x = np.linspace(0., max_x, 1000)
     t = np.zeros_like(x)
 
     plt.figure()
@@ -23,17 +23,17 @@ def plot_initial_distribution(model, save_dir=None):
     plt.show()
 
 
-def plot_wave_propagation(model, save_dir=None):
+def plot_wave_propagation(model, save_dir=None, max_x=10., max_t=4.):
     """ Plot wave propagation. """
 
-    x = np.linspace(0., 1., 1000)
-    t = np.linspace(0., 1., 100)
+    x = np.linspace(0., max_x, 1000)
+    t = np.linspace(0., max_t, 100)
 
     fig, ax = plt.subplots(figsize=(6, 4))
     ln, = plt.plot([], [], '-', c='k', lw=1)
 
     def init():
-        ax.set_xlim(-0.1, 1.1)
+        ax.set_xlim(-0.1, 0.1 + max_x)
         ax.set_ylim(-0.1, 1.1)
         ax.set_xlabel('x')
         ax.set_ylabel('u')
