@@ -2,17 +2,7 @@ import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # disable tensorflow warnings
 
 import tensorflow as tf
-import logging
 import sys
-
-
-console_formatter = logging.Formatter("%(levelname)s in %(name)s : %(message)s")
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.DEBUG)
-console_handler.setFormatter(console_formatter)
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
-logger.addHandler(console_handler)
 
 
 class PINN:
