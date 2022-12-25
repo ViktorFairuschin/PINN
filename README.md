@@ -1,11 +1,13 @@
 # Physics Informed Neural Network
 
-This is a TensorFlow implementation of physics informed neural 
+This is a tensorflow implementation of physics informed neural 
 network for one-dimensional wave equation.
 
 ## A brief introduction to physics informed neural networks
 
-
+$$
+u" - c^2 \ddot{u} = 0
+$$
 
 Consider a one-dimensional wave equation 
 
